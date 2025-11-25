@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.stereotype.Service;
 
 import com.t1impulse.interviewer.config.LangConfig;
@@ -22,6 +24,22 @@ import com.t1impulse.interviewer.dto.TestResultDto;
 
 @Service
 public class CodeRunnerService {
+
+    @PostConstruct
+    public void warmupImages() {
+        for (LangConfig cfg : LangConfigs.CONFIGS.values()) {
+            try {
+                ProcessBuilder pb = new ProcessBuilder("docker", "pull", cfg.image());
+                pb.redirectErrorStream(true);
+                Process process = pb.start();
+                // Ждём, но не навечно, чтобы не вешать приложение
+                process.waitFor(300_000, TimeUnit.MILLISECONDS);
+                System.out.println("Image " + cfg.image() + " was pulled");
+            } catch (Exception ignored) {
+                System.out.println("Не получилось подтянуть образ " + cfg.image());
+            }
+        }
+    }
 
     public RunResponse run(RunRequest req) {
         LangConfig cfg = LangConfigs.CONFIGS.get(req.language());
@@ -119,6 +137,7 @@ public class CodeRunnerService {
         List<String> fullCmd = new ArrayList<>();
         fullCmd.add("docker");
         fullCmd.add("run");
+        fullCmd.add("-i"); // keep stdin open so we can pass test input
         fullCmd.add("--rm");
         fullCmd.add("--network=none");
         fullCmd.add("--cpus=1");
