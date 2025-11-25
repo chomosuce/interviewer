@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  ai:
+    openai:
+      base-url: https://llm.t1v.scibox.tech
+      api-key: sk-v7-pQZBVeDdViRVr1Hknng
+      chat:
+        options:
+          model: qwen3-32b-awq
+          temperature: 0.3
+
+logging:
+  level:
+    org.springframework.ai: INFO
