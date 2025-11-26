@@ -6,6 +6,7 @@ import com.t1impulse.interviewer.dto.CreateAccessLinkRequest;
 import com.t1impulse.interviewer.dto.CreateSessionRequest;
 import com.t1impulse.interviewer.dto.SessionResponse;
 import com.t1impulse.interviewer.dto.SessionResponse.AlgorithmTaskInSessionResponse;
+import com.t1impulse.interviewer.dto.StartSessionResponse;
 import com.t1impulse.interviewer.dto.TestGenerationResponse;
 import com.t1impulse.interviewer.dto.TestGenerationResponse.QuestionResponse;
 import com.t1impulse.interviewer.entity.InterviewSession;
@@ -119,6 +120,31 @@ public class SessionService {
         
         InterviewSession session = candidate.getSession();
         return mapToResponse(session);
+    }
+
+    @Transactional
+    public StartSessionResponse startSession(String accessToken) {
+        SessionCandidate candidate = sessionCandidateRepository.findByAccessToken(accessToken)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid access token"));
+        
+        if (Boolean.TRUE.equals(candidate.getStarted())) {
+            // Сессия уже была начата
+            return new StartSessionResponse(
+                    true,
+                    "Session was already started"
+            );
+        }
+        
+        // Отмечаем начало выполнения
+        candidate.setStarted(true);
+        sessionCandidateRepository.save(candidate);
+        
+        log.info("Session started for candidate {} with token {}", candidate.getCandidateName(), accessToken);
+        
+        return new StartSessionResponse(
+                false,
+                "Session started successfully"
+        );
     }
 
     private String generateUniqueToken() {

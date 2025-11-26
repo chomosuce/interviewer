@@ -20,7 +20,7 @@ public class JwtService {
     @Value("${spring.security.jwt.secret}")
     private String secret;
 
-    private static final long ACCESS_TOKEN_EXPIRATION = 1000L * 60 * 15;
+    private static final long ACCESS_TOKEN_EXPIRATION = 1000L * 60 * 60 * 12;
     private static final long REFRESH_TOKEN_EXPIRATION = 1000L * 60 * 60 * 24 * 7;
 
     public String generateAccessToken(UserDetails user) {

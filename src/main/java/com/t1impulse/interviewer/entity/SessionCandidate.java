@@ -33,6 +33,10 @@ public class SessionCandidate {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean started = false;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
