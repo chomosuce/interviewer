@@ -39,4 +39,14 @@ public class ChatController {
             @RequestParam(defaultValue = "5") int questionCount) {
         return testGenerationService.generateTest(topic, questionCount);
     }
+
+    @GetMapping("/test/{testId}")
+    public TestGenerationResponse getTestById(@PathVariable Long testId) {
+        return testGenerationService.getTestById(testId);
+    }
+
+    @GetMapping("/tests")
+    public java.util.List<TestGenerationResponse> getTestsByTopic(@RequestParam TestTopic topic) {
+        return testGenerationService.getTestsByTopic(topic);
+    }
 }
