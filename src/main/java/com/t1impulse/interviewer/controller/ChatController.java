@@ -6,7 +6,10 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
 
+import com.t1impulse.interviewer.config.TestTopic;
+import com.t1impulse.interviewer.dto.TestGenerationResponse;
 import com.t1impulse.interviewer.service.ChatService;
+import com.t1impulse.interviewer.service.TestGenerationService;
 
 import java.util.UUID;
 
@@ -16,6 +19,7 @@ import java.util.UUID;
 public class ChatController {
 
     private final ChatService chatService;
+    private final TestGenerationService testGenerationService;
 
     @PostMapping
     public String chat(@RequestBody String question,
@@ -27,5 +31,12 @@ public class ChatController {
         }
 
         return chatService.ask(convId, question);
+    }
+
+    @GetMapping("/test")
+    public TestGenerationResponse generateTest(
+            @RequestParam TestTopic topic,
+            @RequestParam(defaultValue = "5") int questionCount) {
+        return testGenerationService.generateTest(topic, questionCount);
     }
 }
