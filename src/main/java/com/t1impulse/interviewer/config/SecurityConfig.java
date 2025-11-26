@@ -24,7 +24,7 @@ import javax.crypto.SecretKey;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Value("${spring.security.jwt.secret}")
+    @Value("${spring.security.jwt.secret:dGhpc2lzYXZlcnlsb25nc2VjcmV0a2V5Zm9yand0dG9rZW5zMTIzNDU2Nzg5MA==}")
     private String secret;
 
     @Bean
