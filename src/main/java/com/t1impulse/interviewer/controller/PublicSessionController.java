@@ -6,12 +6,14 @@ import com.t1impulse.interviewer.dto.StartSessionResponse;
 import com.t1impulse.interviewer.dto.SubmitResultsRequest;
 import com.t1impulse.interviewer.service.ResultsService;
 import com.t1impulse.interviewer.service.SessionService;
+import com.t1impulse.interviewer.service.SystemTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,9 +24,13 @@ public class PublicSessionController {
 
     private final SessionService sessionService;
     private final ResultsService resultsService;
+    private final SystemTokenService systemTokenService;
 
     @GetMapping("/{accessToken}")
-    public ResponseEntity<SessionResponse> getSessionByToken(@PathVariable String accessToken) {
+    public ResponseEntity<SessionResponse> getSessionByToken(
+            @PathVariable String accessToken,
+            @RequestHeader(value = "X-System-Token", required = false) String systemToken) {
+        systemTokenService.validateToken(systemToken);
         try {
             SessionResponse session = sessionService.getSessionByToken(accessToken);
             return ResponseEntity.ok(session);
@@ -46,7 +52,9 @@ public class PublicSessionController {
     @PostMapping("/{accessToken}/results")
     public ResponseEntity<ResultsResponse> submitResults(
             @PathVariable String accessToken,
-            @RequestBody SubmitResultsRequest request) {
+            @RequestBody SubmitResultsRequest request,
+            @RequestHeader(value = "X-System-Token", required = false) String systemToken) {
+        systemTokenService.validateToken(systemToken);
         try {
             ResultsResponse response = resultsService.submitResults(accessToken, request);
             return ResponseEntity.ok(response);

@@ -83,7 +83,7 @@ public class SessionContorller {
                 .toList();
     }
 
-    @GetMapping("/randomTask")
+    @PostMapping("/randomTask")
     public ResponseEntity<TaskResponse> getRandomTask(
             @RequestParam(required = false) Difficulty difficulty,
             @RequestParam(required = false) UUID sessionId

@@ -29,18 +29,11 @@ public class SecurityConfig {
     @Value("${spring.security.jwt.secret:dGhpc2lzYXZlcnlsb25nc2VjcmV0a2V5Zm9yand0dG9rZW5zMTIzNDU2Nzg5MA==}")
     private String secret;
 
-    private final SystemTokenFilter systemTokenFilter;
-
-    public SecurityConfig(SystemTokenFilter systemTokenFilter) {
-        this.systemTokenFilter = systemTokenFilter;
-    }
-
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(systemTokenFilter, org.springframework.security.web.access.intercept.AuthorizationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/user/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
