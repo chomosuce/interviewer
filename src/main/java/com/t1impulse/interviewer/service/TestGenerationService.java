@@ -13,6 +13,7 @@ import com.t1impulse.interviewer.dto.AiTestResponse;
 import com.t1impulse.interviewer.dto.TestGenerationResponse;
 import com.t1impulse.interviewer.dto.TestGenerationResponse.QuestionResponse;
 import com.t1impulse.interviewer.entity.GeneratedTest;
+import com.t1impulse.interviewer.entity.InterviewSession;
 import com.t1impulse.interviewer.entity.Question;
 import com.t1impulse.interviewer.repository.GeneratedTestRepository;
 
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -28,15 +30,19 @@ public class TestGenerationService {
 
     private final ChatClient.Builder chatClientBuilder;
     private final GeneratedTestRepository testRepository;
+    private final SessionService sessionService;
     private final ObjectMapper objectMapper;
 
     @Transactional
-    public TestGenerationResponse generateTest(TestTopic topic, int questionCount) {
+    public TestGenerationResponse generateTest(TestTopic topic, int questionCount, UUID sessionId) {
         PromptTemplate template = TestPromptTemplates.get(topic);
         
         if (template == null) {
             throw new IllegalArgumentException("Unknown topic: " + topic);
         }
+
+        // Получаем или создаём сессию
+        InterviewSession session = sessionService.getOrCreateSession(sessionId);
 
         OpenAiChatOptions options = OpenAiChatOptions.builder()
                 .model(template.model())
@@ -47,7 +53,7 @@ public class TestGenerationService {
 
         String userPrompt = template.getUserPrompt(questionCount);
 
-        log.info("Generating test for topic: {}, questions: {}", topic, questionCount);
+        log.info("Generating test for topic: {}, questions: {}, session: {}", topic, questionCount, session.getId());
 
         String content = chatClientBuilder.build()
                 .prompt()
@@ -66,6 +72,7 @@ public class TestGenerationService {
         GeneratedTest test = GeneratedTest.builder()
                 .topic(topic)
                 .questionCount(aiResponse.questions().size())
+                .session(session)
                 .build();
 
         for (AiTestResponse.QuestionDto questionDto : aiResponse.questions()) {
@@ -81,7 +88,7 @@ public class TestGenerationService {
         }
 
         GeneratedTest savedTest = testRepository.save(test);
-        log.info("Test saved with id: {}", savedTest.getId());
+        log.info("Test saved with id: {}, session: {}", savedTest.getId(), session.getId());
 
         return mapToResponse(savedTest);
     }
@@ -150,8 +157,11 @@ public class TestGenerationService {
                 ))
                 .toList();
 
+        UUID sessionId = test.getSession() != null ? test.getSession().getId() : null;
+
         return new TestGenerationResponse(
                 test.getId(),
+                sessionId,
                 test.getTopic(),
                 test.getQuestionCount(),
                 test.getCreatedAt(),

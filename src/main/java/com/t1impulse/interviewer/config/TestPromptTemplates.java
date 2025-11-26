@@ -51,7 +51,7 @@ public final class TestPromptTemplates {
                         """ + JSON_FORMAT_INSTRUCTION,
                 0.4, 0.9, 4000));
 
-        TEMPLATES.put(TestTopic.BACKEND, new PromptTemplate(
+        TEMPLATES.put(TestTopic.JAVA, new PromptTemplate(
                 "qwen3-32b-awq",
                 "/no_think Ты — строгий преподаватель по backend-разработке на Java/Spring. Отвечай ТОЛЬКО валидным JSON.",
                 """

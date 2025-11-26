@@ -37,6 +37,10 @@ public class GeneratedTest {
     @Builder.Default
     private List<Question> questions = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "session_id")
+    private InterviewSession session;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
