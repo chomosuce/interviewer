@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.t1impulse.interviewer.config.TestTopic;
+import com.t1impulse.interviewer.dto.AccessLinkResponse;
+import com.t1impulse.interviewer.dto.CandidateResponse;
+import com.t1impulse.interviewer.dto.CreateAccessLinkRequest;
 import com.t1impulse.interviewer.dto.CreateSessionRequest;
 import com.t1impulse.interviewer.dto.SessionResponse;
 import com.t1impulse.interviewer.dto.TaskResponse;
@@ -98,5 +101,15 @@ public class SessionContorller {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/createAccessLink")
+    public AccessLinkResponse createAccessLink(@RequestBody CreateAccessLinkRequest request) {
+        return sessionService.createAccessLink(request);
+    }
+
+    @GetMapping("/candidates/{sessionId}")
+    public List<CandidateResponse> getSessionCandidates(@PathVariable UUID sessionId) {
+        return sessionService.getSessionCandidates(sessionId);
     }
 }

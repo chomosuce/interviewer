@@ -35,6 +35,10 @@ public class InterviewSession {
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    private List<SessionCandidate> candidates = new ArrayList<>();
+
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<SessionAlgorithmTask> algorithmTasks = new ArrayList<>();
 
     @PrePersist
@@ -50,6 +54,11 @@ public class InterviewSession {
     public void addAlgorithmTask(SessionAlgorithmTask sessionTask) {
         algorithmTasks.add(sessionTask);
         sessionTask.setSession(this);
+    }
+
+    public void addCandidate(SessionCandidate candidate) {
+        candidates.add(candidate);
+        candidate.setSession(this);
     }
 }
 
