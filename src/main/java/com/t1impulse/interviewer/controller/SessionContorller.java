@@ -14,14 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.t1impulse.interviewer.config.TestTopic;
 import com.t1impulse.interviewer.dto.CreateSessionRequest;
 import com.t1impulse.interviewer.dto.SessionResponse;
+import com.t1impulse.interviewer.dto.TaskResponse;
 import com.t1impulse.interviewer.dto.TestGenerationResponse;
 import com.t1impulse.interviewer.dto.TopicResponse;
+import com.t1impulse.interviewer.entity.Difficulty;
 import com.t1impulse.interviewer.service.SessionService;
+import com.t1impulse.interviewer.service.TaskService;
 import com.t1impulse.interviewer.service.TestGenerationService;
 
 import java.util.Arrays;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
@@ -31,6 +35,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public class SessionContorller {
     private final TestGenerationService testGenerationService;
     private final SessionService sessionService;
+    private final TaskService taskService;
 
     @PostMapping("/create")
     public SessionResponse createSession(@RequestBody(required = false) CreateSessionRequest request) {
@@ -75,5 +80,23 @@ public class SessionContorller {
                         topic.getDescription()
                 ))
                 .toList();
+    }
+
+    @GetMapping("/randomTask")
+    public ResponseEntity<TaskResponse> getRandomTask(
+            @RequestParam(required = false) Difficulty difficulty,
+            @RequestParam(required = false) UUID sessionId
+    ) {
+        try {
+            TaskResponse task;
+            if (difficulty != null) {
+                task = taskService.getRandomTaskByDifficulty(difficulty, sessionId);
+            } else {
+                task = taskService.getRandomTask(sessionId);
+            }
+            return ResponseEntity.ok(task);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

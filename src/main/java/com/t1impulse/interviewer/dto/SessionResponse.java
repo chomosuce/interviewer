@@ -8,8 +8,16 @@ public record SessionResponse(
         UUID sessionId,
         String description,
         LocalDateTime createdAt,
-        List<TestGenerationResponse> tests
-        // В будущем: List<AlgorithmTaskResponse> algorithmTasks
+        List<TestGenerationResponse> tests,
+        List<AlgorithmTaskInSessionResponse> algorithmTasks
 ) {
+    public record AlgorithmTaskInSessionResponse(
+            Long taskId,
+            String titleRu,
+            String descriptionRu,
+            String difficulty,
+            LocalDateTime assignedAt
+    ) {
+    }
 }
 

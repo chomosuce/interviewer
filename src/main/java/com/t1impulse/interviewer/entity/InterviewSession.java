@@ -33,10 +33,9 @@ public class InterviewSession {
     @Builder.Default
     private List<GeneratedTest> tests = new ArrayList<>();
 
-    // Подготовлено для будущих алгоритмических задач
-    // @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
-    // @Builder.Default
-    // private List<AlgorithmTask> algorithmTasks = new ArrayList<>();
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<SessionAlgorithmTask> algorithmTasks = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
@@ -46,6 +45,11 @@ public class InterviewSession {
     public void addTest(GeneratedTest test) {
         tests.add(test);
         test.setSession(this);
+    }
+
+    public void addAlgorithmTask(SessionAlgorithmTask sessionTask) {
+        algorithmTasks.add(sessionTask);
+        sessionTask.setSession(this);
     }
 }
 

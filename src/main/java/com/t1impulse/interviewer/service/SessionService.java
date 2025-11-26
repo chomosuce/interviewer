@@ -2,6 +2,7 @@ package com.t1impulse.interviewer.service;
 
 import com.t1impulse.interviewer.dto.CreateSessionRequest;
 import com.t1impulse.interviewer.dto.SessionResponse;
+import com.t1impulse.interviewer.dto.SessionResponse.AlgorithmTaskInSessionResponse;
 import com.t1impulse.interviewer.dto.TestGenerationResponse;
 import com.t1impulse.interviewer.dto.TestGenerationResponse.QuestionResponse;
 import com.t1impulse.interviewer.entity.InterviewSession;
@@ -83,11 +84,22 @@ public class SessionService {
                 })
                 .toList();
 
+        List<AlgorithmTaskInSessionResponse> algorithmTasks = session.getAlgorithmTasks().stream()
+                .map(sat -> new AlgorithmTaskInSessionResponse(
+                        sat.getAlgorithmTask().getId(),
+                        sat.getAlgorithmTask().getTitleRu(),
+                        sat.getAlgorithmTask().getDescriptionRu(),
+                        sat.getAlgorithmTask().getDifficulty().name(),
+                        sat.getAssignedAt()
+                ))
+                .toList();
+
         return new SessionResponse(
                 session.getId(),
                 session.getDescription(),
                 session.getCreatedAt(),
-                tests
+                tests,
+                algorithmTasks
         );
     }
 }
