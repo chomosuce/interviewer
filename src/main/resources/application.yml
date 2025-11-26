@@ -1,11 +1,14 @@
 server:
   port: 8080
 
+
 spring:
+  application:
+    name: interviewer
   ai:
     openai:
       base-url: https://llm.t1v.scibox.tech
-      api-key: sk-v7-pQZBVeDdViRVr1Hknng
+      api-key: ${OPENAI_API_KEY}
       chat:
         options:
           model: qwen3-32b-awq
@@ -24,6 +27,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    jwt:
+      secret: superduperpupersecretkeyforsigningjwt1234567890
 
 logging:
   level:
