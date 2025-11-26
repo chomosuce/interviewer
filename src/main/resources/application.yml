@@ -1,10 +1,12 @@
 server:
   port: 8080
 
+app:
+  admin:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:admin123}
 
 spring:
-  application:
-    name: interviewer
   ai:
     openai:
       base-url: https://llm.t1v.scibox.tech
@@ -27,9 +29,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
   security:
     jwt:
-      secret: superduperpupersecretkeyforsigningjwt1234567890
+      secret: ${JWT_SECRET:dGhpc2lzYXZlcnlsb25nc2VjcmV0a2V5Zm9yand0dG9rZW5zMTIzNDU2Nzg5MA==}
 
 logging:
   level:

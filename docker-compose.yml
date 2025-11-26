@@ -31,6 +31,10 @@ services:
       DB_NAME: interviewer
       DB_USER: interviewer
       DB_PASSWORD: interviewer
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+      JWT_SECRET: ${JWT_SECRET:-dGhpc2lzYXZlcnlsb25nc2VjcmV0a2V5Zm9yand0dG9rZW5zMTIzNDU2Nzg5MA==}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     depends_on:
       postgres:
         condition: service_healthy

@@ -22,10 +22,12 @@ import com.t1impulse.interviewer.service.TestGenerationService;
 import java.util.Arrays;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/session")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class SessionContorller {
     private final TestGenerationService testGenerationService;
     private final SessionService sessionService;
