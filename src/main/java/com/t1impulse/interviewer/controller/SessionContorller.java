@@ -16,11 +16,13 @@ import com.t1impulse.interviewer.dto.AccessLinkResponse;
 import com.t1impulse.interviewer.dto.CandidateResponse;
 import com.t1impulse.interviewer.dto.CreateAccessLinkRequest;
 import com.t1impulse.interviewer.dto.CreateSessionRequest;
+import com.t1impulse.interviewer.dto.ResultsResponse;
 import com.t1impulse.interviewer.dto.SessionResponse;
 import com.t1impulse.interviewer.dto.TaskResponse;
 import com.t1impulse.interviewer.dto.TestGenerationResponse;
 import com.t1impulse.interviewer.dto.TopicResponse;
 import com.t1impulse.interviewer.entity.Difficulty;
+import com.t1impulse.interviewer.service.ResultsService;
 import com.t1impulse.interviewer.service.SessionService;
 import com.t1impulse.interviewer.service.TaskService;
 import com.t1impulse.interviewer.service.TestGenerationService;
@@ -39,6 +41,7 @@ public class SessionContorller {
     private final TestGenerationService testGenerationService;
     private final SessionService sessionService;
     private final TaskService taskService;
+    private final ResultsService resultsService;
 
     @PostMapping("/create")
     public SessionResponse createSession(@RequestBody(required = false) CreateSessionRequest request) {
@@ -111,5 +114,15 @@ public class SessionContorller {
     @GetMapping("/candidates/{sessionId}")
     public List<CandidateResponse> getSessionCandidates(@PathVariable UUID sessionId) {
         return sessionService.getSessionCandidates(sessionId);
+    }
+
+    @GetMapping("/results/{sessionId}")
+    public List<ResultsResponse> getSessionResults(@PathVariable UUID sessionId) {
+        return resultsService.getResultsBySessionId(sessionId);
+    }
+
+    @GetMapping("/results/candidate/{candidateId}")
+    public List<ResultsResponse> getCandidateResults(@PathVariable Long candidateId) {
+        return resultsService.getResultsByCandidateId(candidateId);
     }
 }

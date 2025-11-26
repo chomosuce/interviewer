@@ -90,6 +90,10 @@ public class SessionService {
 
     @Transactional
     public AccessLinkResponse createAccessLink(CreateAccessLinkRequest request) {
+        if (request == null || request.sessionId() == null) {
+            throw new IllegalArgumentException("Session ID is required");
+        }
+        
         InterviewSession session = sessionRepository.findById(request.sessionId())
                 .orElseThrow(() -> new IllegalArgumentException("Session not found: " + request.sessionId()));
         
