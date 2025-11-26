@@ -72,11 +72,6 @@ public class SessionContorller {
         return testGenerationService.getTestById(testId);
     }
 
-    @GetMapping("/allTests")
-    public List<TestGenerationResponse> getTestsByTopic(@RequestParam TestTopic topic) {
-        return testGenerationService.getTestsByTopic(topic);
-    }
-
     @GetMapping("/topics")
     public List<TopicResponse> getAllTopics() {
         return Arrays.stream(TestTopic.values())

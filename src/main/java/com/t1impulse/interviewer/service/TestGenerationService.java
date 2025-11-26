@@ -99,13 +99,6 @@ public class TestGenerationService {
         return mapToResponse(test);
     }
 
-    public List<TestGenerationResponse> getTestsByTopic(TestTopic topic) {
-        return testRepository.findByTopicOrderByCreatedAtDesc(topic)
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
-    }
-
     private AiTestResponse parseAiResponse(String content) {
         try {
             String json = content.trim();

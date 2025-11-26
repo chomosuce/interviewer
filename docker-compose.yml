@@ -25,6 +25,9 @@ services:
     container_name: interviewer-app
     ports:
       - "8080:8080"
+    volumes:
+      # Монтируем Docker socket для доступа к Docker daemon
+      - /var/run/docker.sock:/var/run/docker.sock
     env_file:
       - .env
     environment:
