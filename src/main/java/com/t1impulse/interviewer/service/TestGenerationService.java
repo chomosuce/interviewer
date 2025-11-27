@@ -55,13 +55,19 @@ public class TestGenerationService {
 
         log.info("Generating test for topic: {}, questions: {}, session: {}", topic, questionCount, session.getId());
 
-        String content = chatClientBuilder.build()
-                .prompt()
-                .system(template.system())
-                .user(userPrompt)
-                .options(options)
-                .call()
-                .content();
+        String content;
+        try {
+            content = chatClientBuilder.build()
+                    .prompt()
+                    .system(template.system())
+                    .user(userPrompt)
+                    .options(options)
+                    .call()
+                    .content();
+        } catch (Exception e) {
+            log.error("Failed to generate test via AI API: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to generate test: " + e.getMessage() + ". Check API key and server availability.", e);
+        }
 
         log.debug("AI response: {}", content);
 
