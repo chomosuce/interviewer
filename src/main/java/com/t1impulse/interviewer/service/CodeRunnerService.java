@@ -48,9 +48,20 @@ public class CodeRunnerService {
         }
 
         try {
+            // Создаем временную директорию
             Path tmpDir = Files.createTempDirectory("job-");
             Path srcFile = tmpDir.resolve(cfg.sourceFile());
             Files.writeString(srcFile, req.source(), StandardCharsets.UTF_8);
+            
+            // Убеждаемся, что файл записан на диск
+            if (!Files.exists(srcFile) || !Files.isRegularFile(srcFile)) {
+                throw new IOException("Source file was not created: " + srcFile);
+            }
+            
+            // Логируем для диагностики
+            System.out.println("Created source file: " + srcFile.toAbsolutePath());
+            System.out.println("File exists: " + Files.exists(srcFile));
+            System.out.println("File size: " + Files.size(srcFile));
 
             // 1. Компиляция (если нужна)
             String compileError = null;
@@ -134,6 +145,18 @@ public class CodeRunnerService {
         int memoryLimitMb
 ) {
     try {
+        // Преобразуем путь для Docker
+        String volumePath = workDir.toAbsolutePath().toString();
+        
+        // На Windows Docker Desktop требует специальный формат пути
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            volumePath = volumePath.replace("\\", "/");
+            if (volumePath.matches("^[A-Za-z]:/.*")) {
+                // Преобразуем C:/path в /c/path для Docker Desktop
+                volumePath = "/" + volumePath.substring(0, 1).toLowerCase() + volumePath.substring(2);
+            }
+        }
+        
         List<String> fullCmd = new ArrayList<>();
         fullCmd.add("docker");
         fullCmd.add("run");
@@ -145,11 +168,15 @@ public class CodeRunnerService {
         fullCmd.add(memoryLimitMb + "m");
         fullCmd.add("--pids-limit=64");
         fullCmd.add("-v");
-        fullCmd.add(workDir.toAbsolutePath() + ":/code");
+        fullCmd.add(volumePath + ":/code");
         fullCmd.add("-w");
         fullCmd.add("/code");
         fullCmd.add(image);
         fullCmd.addAll(cmd);
+
+        // Логируем команду для диагностики
+        System.out.println("Docker command: " + String.join(" ", fullCmd));
+        System.out.println("Volume path: " + volumePath);
 
         ProcessBuilder pb = new ProcessBuilder(fullCmd);
         Process process = pb.start();
